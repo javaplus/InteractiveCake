@@ -7,6 +7,7 @@ then when countdown gets to zero activate the solenoid.
 ******************************************************************************/
 const int PIEZO_PIN = A0; // Piezo output
 int LED = 2; //the pin we connect the LED
+int SOLENOID = 5; //the pin we connect the Solenoid
 int flickerInterval = 100;
 unsigned long startFlickerTime = 0;
 const VIBRATION_LEVEL_FOR_HIT=3000;
