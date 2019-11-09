@@ -29,6 +29,8 @@ void setup()
   Serial.begin(9600);
   matrix.begin(0x70);
   pinMode(LED, OUTPUT); //set the LED pin as OUTPUT
+  pinMode(SOLENOID, OUTPUT); //set the SOLENOID pin as OUTPUT
+  digitalWrite(SOLENOID, LOW); // make sure solenoid is off
   matrix.print(countDownValue);
   matrix.writeDisplay();
 }
@@ -65,6 +67,10 @@ void loop()
     reactingToHit = false;
     lastHit = 0;
     if(countDownValue==0){
+      digitalWrite(SOLENOID, HIGH); 
+      delay(150);
+      digitalWrite(SOLENOID, LOW); 
+      
       countDownValue = 10;
       matrix.print(countDownValue);
       matrix.writeDisplay();
