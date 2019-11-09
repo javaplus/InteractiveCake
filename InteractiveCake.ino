@@ -1,3 +1,6 @@
+#include <Wire.h> // Enable this line if using Arduino Uno, Mega, etc.
+#include <Adafruit_GFX.h>
+#include "Adafruit_LEDBackpack.h"
 /******************************************************************************
 
 When the piezo vibration sensor is triggered countdown the timer by 1,
@@ -5,12 +8,13 @@ then when countdown gets to zero activate the solenoid.
 
 
 ******************************************************************************/
+Adafruit_7segment matrix = Adafruit_7segment();
 const int PIEZO_PIN = A0; // Piezo output
 int LED = 2; //the pin we connect the LED
 int SOLENOID = 5; //the pin we connect the Solenoid
 int flickerInterval = 100;
 unsigned long startFlickerTime = 0;
-const VIBRATION_LEVEL_FOR_HIT=3000;
+const int VIBRATION_LEVEL_FOR_HIT=100;
 int countDownValue = 10;
 
 unsigned long lastHit = 0;
@@ -23,7 +27,10 @@ int vibrationLevel = 0;
 void setup() 
 {
   Serial.begin(9600);
-   pinMode(LED, OUTPUT); //set the LED pin as OUTPUT
+  matrix.begin(0x70);
+  pinMode(LED, OUTPUT); //set the LED pin as OUTPUT
+  matrix.print(countDownValue);
+  matrix.writeDisplay();
 }
 
 void loop() 
@@ -32,12 +39,16 @@ void loop()
   // Read Piezo ADC value in, and convert it to a voltage
   if(!reactingToHit){
     vibrationLevel = analogRead(PIEZO_PIN);
+    Serial.println(vibrationLevel);
   }
   
   if(vibrationLevel > VIBRATION_LEVEL_FOR_HIT){
     // if not currently reacting to a hit read the time (i.e. it's a new hit)
     if(!reactingToHit){
       lastHit = millis();
+      countDownValue= countDownValue - 1;
+      matrix.print(countDownValue);
+      matrix.writeDisplay();
     }
     reactingToHit = true;
     Serial.println("HIT");
@@ -53,6 +64,12 @@ void loop()
     // we've responded to the hit long enough
     reactingToHit = false;
     lastHit = 0;
+    if(countDownValue==0){
+      countDownValue = 10;
+      matrix.print(countDownValue);
+      matrix.writeDisplay();
+    }
+    
     
   }
   int mod = (millis()-lastHit)%100;
@@ -65,7 +82,7 @@ void loop()
   }
   if(areFlickering){
     digitalWrite(LED, LOW); //write 0 or LOW to led pin
-    digitalWrite(LED_LIGHT_HIT, LOW); //write 0 or LOW to led pin
+    
   }
   if(millis()-startFlickerTime > flickerInterval){
     areFlickering = false;
