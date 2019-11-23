@@ -14,7 +14,7 @@ int LED = 2; //the pin we connect the LED
 int SOLENOID = 5; //the pin we connect the Solenoid
 int flickerInterval = 100;
 unsigned long startFlickerTime = 0;
-const int VIBRATION_LEVEL_FOR_HIT=100;
+const int VIBRATION_LEVEL_FOR_HIT=50;
 int countDownValue = 10;
 
 unsigned long lastHit = 0;
